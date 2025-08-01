@@ -3,6 +3,8 @@ local POSTAL_FILE = DATA_FOLDER .. '/postals.json'
 local CITY_FILE = DATA_FOLDER .. '/cities.json'
 local COUNTY_FILE = DATA_FOLDER .. '/counties.json'
 
+local playerLocationData = {}
+
 local function loadData(fileName)
     local file = LoadResourceFile(GetCurrentResourceName(), fileName)
     if file then
@@ -56,5 +58,28 @@ AddEventHandler('aNearestLocations', function(playerCoords)
     local nearestCity = getNearestLocation(playerCoords, cities)
     local nearestCounty = getNearestLocation(playerCoords, counties)
 
+    playerLocationData[src] = {
+        postal = nearestPostal,
+        city = nearestCity,
+        county = nearestCounty
+    }
+
     TriggerClientEvent('rNearestLocations', src, nearestPostal, nearestCity, nearestCounty)
 end)
+
+exports('getPostal', function(playerId)
+    return playerLocationData[playerId] and playerLocationData[playerId].postal or nil
+end)
+
+exports('getCity', function(playerId)
+    return playerLocationData[playerId] and playerLocationData[playerId].city or nil
+end)
+
+exports('getCounty', function(playerId)
+    return playerLocationData[playerId] and playerLocationData[playerId].county or nil
+end)
+
+AddEventHandler('playerDropped', function()
+    playerLocationData[source] = nil
+end)
+
