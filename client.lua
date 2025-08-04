@@ -3,24 +3,24 @@ local currentPostal, currentCity, currentCounty
 local function updateLocationData()
     local playerPed = PlayerPedId()
     local playerCoords = GetEntityCoords(playerPed)
-    TriggerServerEvent('aNearestLocations', {x = playerCoords.x, y = playerCoords.y})
+    TriggerServerEvent('ImperialLocation:updateNearest', {x = playerCoords.x, y = playerCoords.y})
 end
 
 Citizen.CreateThread(function()
     while true do
         updateLocationData()
-        Citizen.Wait(500) 
+        Citizen.Wait(Config.Frequency)
     end
 end)
 
 RegisterCommand("getlocation", function()
     local playerPed = PlayerPedId()
     local playerCoords = GetEntityCoords(playerPed)
-    TriggerServerEvent('requestNearestLocations', {x = playerCoords.x, y = playerCoords.y})
+    TriggerServerEvent('ImperialLocation:updateNearest', {x = playerCoords.x, y = playerCoords.y})
 end, false)
 
-RegisterNetEvent('receiveNearestLocations')
-AddEventHandler('receiveNearestLocations', function(nearestPostal, nearestCity, nearestCounty)
+RegisterNetEvent('ImperialLocation:PrintNearest')
+AddEventHandler('ImperialLocation:PrintNearest', function(nearestPostal, nearestCity, nearestCounty)
     local postalText = nearestPostal and nearestPostal.code or "None"
     local cityText = nearestCity and nearestCity.city or "None"
     local countyText = nearestCounty and nearestCounty.county or "None"
@@ -31,8 +31,8 @@ AddEventHandler('receiveNearestLocations', function(nearestPostal, nearestCity, 
     })
 end)
 
-RegisterNetEvent('rNearestLocations')
-AddEventHandler('rNearestLocations', function(nearestPostal, nearestCity, nearestCounty)
+RegisterNetEvent('ImperialLocation:receiveNearest')
+AddEventHandler('ImperialLocation:receiveNearest', function(nearestPostal, nearestCity, nearestCounty)
     currentPostal = nearestPostal and nearestPostal.code or "None"
     currentCity = nearestCity and nearestCity.city or "None"
     currentCounty = nearestCounty and nearestCounty.county or "None"

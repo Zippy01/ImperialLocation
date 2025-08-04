@@ -41,18 +41,8 @@ local function getNearestLocation(coords, locations)
     return nearest
 end
 
-RegisterNetEvent('requestNearestLocations')
-AddEventHandler('requestNearestLocations', function(playerCoords)
-    local src = source
-    local nearestPostal = getNearestLocation(playerCoords, postals)
-    local nearestCity = getNearestLocation(playerCoords, cities)
-    local nearestCounty = getNearestLocation(playerCoords, counties)
-
-    TriggerClientEvent('receiveNearestLocations', src, nearestPostal, nearestCity, nearestCounty)
-end)
-
-RegisterNetEvent('aNearestLocations')
-AddEventHandler('aNearestLocations', function(playerCoords)
+RegisterNetEvent('ImperialLocation:updateNearest')
+AddEventHandler('ImperialLocation:updateNearest', function(playerCoords, shouldDisplay)
     local src = source
     local nearestPostal = getNearestLocation(playerCoords, postals)
     local nearestCity = getNearestLocation(playerCoords, cities)
@@ -64,7 +54,11 @@ AddEventHandler('aNearestLocations', function(playerCoords)
         county = nearestCounty
     }
 
-    TriggerClientEvent('rNearestLocations', src, nearestPostal, nearestCity, nearestCounty)
+    TriggerClientEvent('ImperialLocation:receiveNearest', src, nearestPostal, nearestCity, nearestCounty)
+
+     if shouldDisplay then
+        TriggerClientEvent('ImperialLocation:PrintNearest', src, nearestPostal, nearestCity, nearestCounty)
+    end
 end)
 
 exports('getPostal', function(playerId)
