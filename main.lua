@@ -65,10 +65,22 @@ RegisterCommand("debugLocationData", function(src)
     print("^3[IMPERIAL DEBUG]^7 Dumping all player location data:")
     for playerId, data in pairs(playerLocationData) do
         print(("Player %s:"):format(playerId))
-        print("  Postal:", data.postal and json.encode(data.postal.code) or "None")
-        print("  City:  ", data.city and json.encode(data.city.city) or "None")
-        print("  County:", data.county and json.encode(data.county.county) or "None")
+        print("  Postal:", data.postal and data.postal.code or "None")
+        print("  City:  ", data.city and data.city.city or "None")
+        print("  County:", data.county and data.county.county or "None")
     end
+end, true)
+
+RegisterCommand("debugCoordsLocation", function(src)
+    local coords = { x = 1909.0826, y = 3654.7751 }
+    local postal = exports["ImperialLocation"]:getNearestPostalFromCoords(coords)
+    local city = exports["ImperialLocation"]:getNearestCityFromCoords(coords)
+    local county = exports["ImperialLocation"]:getNearestCountyFromCoords(coords)
+
+    print("^3[IMPERIAL DEBUG]^7 Nearest location info for coords: x=" .. coords.x .. ", y=" .. coords.y)
+    print("  Postal:", postal)
+    print("  City:  ", city)
+    print("  County:", county)
 end, true)
 
 exports('getPostal', function(playerId)
@@ -86,4 +98,20 @@ end)
 AddEventHandler('playerDropped', function()
     playerLocationData[source] = nil
 end)
+
+exports('getNearestPostalFromCoords', function(coords)
+    local location = getNearestLocation(coords, postals)
+    return location and location.code or "Unknown"
+end)
+
+exports('getNearestCityFromCoords', function(coords)
+    local location = getNearestLocation(coords, cities)
+    return location and location.city or "Unknown"
+end)
+
+exports('getNearestCountyFromCoords', function(coords)
+    local location = getNearestLocation(coords, counties)
+    return location and location.county or "Unknown"
+end)
+
 
