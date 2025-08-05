@@ -61,16 +61,26 @@ AddEventHandler('ImperialLocation:updateNearest', function(playerCoords, shouldD
     end
 end)
 
+RegisterCommand("debugLocationData", function(src)
+    print("^3[IMPERIAL DEBUG]^7 Dumping all player location data:")
+    for playerId, data in pairs(playerLocationData) do
+        print(("Player %s:"):format(playerId))
+        print("  Postal:", data.postal and json.encode(data.postal.code) or "None")
+        print("  City:  ", data.city and json.encode(data.city.city) or "None")
+        print("  County:", data.county and json.encode(data.county.county) or "None")
+    end
+end, true)
+
 exports('getPostal', function(playerId)
-    return playerLocationData[playerId] and playerLocationData[playerId].postal or nil
+    return playerLocationData[playerId] and playerLocationData[playerId].postal.code or "Unkown"
 end)
 
 exports('getCity', function(playerId)
-    return playerLocationData[playerId] and playerLocationData[playerId].city or nil
+    return playerLocationData[playerId] and playerLocationData[playerId].city.city or "Unkown"
 end)
 
 exports('getCounty', function(playerId)
-    return playerLocationData[playerId] and playerLocationData[playerId].county or nil
+    return playerLocationData[playerId] and playerLocationData[playerId].county.county or "Unkown"
 end)
 
 AddEventHandler('playerDropped', function()
