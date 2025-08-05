@@ -6,4 +6,8 @@ description 'Imperial Location integration'
 version '1.0'
 
 server_script 'main.lua'
-client_script 'client.lua'
+client_scripts {
+    'client.lua',
+    'data/zones.lua'
+}
+shared_script 'config.lua'

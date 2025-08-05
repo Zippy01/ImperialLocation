@@ -34,7 +34,13 @@ end)
 RegisterNetEvent('ImperialLocation:receiveNearest')
 AddEventHandler('ImperialLocation:receiveNearest', function(nearestPostal, nearestCity, nearestCounty)
     currentPostal = nearestPostal and nearestPostal.code or "None"
-    currentCity = nearestCity and nearestCity.city or "None"
+    if Config.UseCustomCities then
+        currentCity = nearestCity and nearestCity.city or "None"
+    else
+        local playerPed = PlayerPedId()
+        local playerCoords = GetEntityCoords(playerPed)
+        currentCity = Zones[GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)] or "None"
+    end
     currentCounty = nearestCounty and nearestCounty.county or "None"
 end)
 
